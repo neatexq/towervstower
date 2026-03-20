@@ -299,18 +299,18 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
       <div class="gold-row">💰 <span id="p1g">0</span> ЗОЛОТА</div>
       <div class="sh">▶ ОТПРАВИТЬ МОБОВ ВРАГУ</div>
       <div class="mob-grid">
-        <button class="cb" onclick="A('mob','zombie')" id="bz"><span class="n">🧟 Зомби</span><span class="c">30💰</span><span class="d">HP:40 Урон:8</span></button>
-        <button class="cb" onclick="A('mob','goblin')" id="bg"><span class="n">🏹 Гоблин</span><span class="c">50💰</span><span class="d">HP:25 Урон:20</span></button>
-        <button class="cb" onclick="A('mob','ogre')" id="bo"><span class="n">🐗 Огр</span><span class="c">120💰</span><span class="d">HP:150 Урон:35</span></button>
-        <button class="cb" onclick="A('mob','dragon')" id="bd"><span class="n">🐉 Дракон</span><span class="c">300💰</span><span class="d">HP:300 Урон:80</span></button>
+        <button class="cb" onclick="A('mob','zombie')" id="bz"><span class="n">🧟 Зомби</span><span class="c">60💰</span><span class="d">HP:160 Урон:20</span></button>
+        <button class="cb" onclick="A('mob','goblin')" id="bg"><span class="n">🏹 Гоблин</span><span class="c">100💰</span><span class="d">HP:90 Урон:40</span></button>
+        <button class="cb" onclick="A('mob','ogre')" id="bo"><span class="n">🐗 Огр</span><span class="c">250💰</span><span class="d">HP:400 Урон:70</span></button>
+        <button class="cb" onclick="A('mob','dragon')" id="bd"><span class="n">🐉 Дракон</span><span class="c">600💰</span><span class="d">HP:700 Урон:130</span></button>
       </div>
       <div class="sh">▶ УЛУЧШЕНИЯ БАШНИ</div>
       <div class="upg-list">
-        <button class="cb" onclick="A('upg','cannon')" id="bu_cannon"><span class="n">💣 Пушка</span><span class="c">80💰</span><span class="d">+15 урон башни</span></button>
-        <button class="cb" onclick="A('upg','wall')" id="bu_wall"><span class="n">🛡️ Стена</span><span class="c">100💰</span><span class="d">+300 HP башне</span></button>
-        <button class="cb" onclick="A('upg','fire')" id="bu_fire"><span class="n">🔥 Огонь</span><span class="c">150💰</span><span class="d">Мобы горят -5/сек</span></button>
-        <button class="cb" onclick="A('upg','mine')" id="bu_mine"><span class="n">⛏️ Шахта</span><span class="c">200💰</span><span class="d">+15💰 каждый тик</span></button>
-        <button class="cb" onclick="A('upg','ballista')" id="bu_ballista"><span class="n">🎯 Баллиста</span><span class="c">250💰</span><span class="d">Бьёт всех мобов</span></button>
+        <button class="cb" onclick="A('upg','cannon')" id="bu_cannon"><span class="n">💣 Пушка</span><span class="c">150💰</span><span class="d">+20 урон башни</span></button>
+        <button class="cb" onclick="A('upg','wall')" id="bu_wall"><span class="n">🛡️ Стена</span><span class="c">200💰</span><span class="d">+400 HP башне</span></button>
+        <button class="cb" onclick="A('upg','fire')" id="bu_fire"><span class="n">🔥 Огонь</span><span class="c">300💰</span><span class="d">Мобы горят -8/сек</span></button>
+        <button class="cb" onclick="A('upg','mine')" id="bu_mine"><span class="n">⛏️ Шахта</span><span class="c">350💰</span><span class="d">+20💰 каждый тик</span></button>
+        <button class="cb" onclick="A('upg','ballista')" id="bu_ballista"><span class="n">🎯 Баллиста</span><span class="c">500💰</span><span class="d">Бьёт всех мобов</span></button>
       </div>
       <div class="sh">▶ СКИЛЛЫ ГЕРОЯ</div>
       <div class="skill-row">
@@ -326,6 +326,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
       <canvas id="gc"></canvas>
       <div class="evlog" id="evl"></div>
       <div class="cdot" id="cdot">● ОНЛАЙН</div>
+      <div id="mobTip" style="display:none;position:absolute;background:rgba(6,10,16,0.96);border:1px solid var(--gold);padding:6px 10px;font-family:var(--px);font-size:6px;color:var(--gold);pointer-events:none;z-index:50;line-height:1.8;"></div>
     </div>
 
     <!-- RIGHT (enemy) panel -->
@@ -428,18 +429,18 @@ const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remo
 //  CONSTANTS
 // ════════════════════════════════
 const MOBS = {
-  // Auto-wave mobs (spawn from center each wave)
-  auto_weak:   {icon:'👾',hp:60, maxHp:60, dmg:10,spd:0.30,cost:0,auto:true},
-  auto_mid:    {icon:'💀',hp:120,maxHp:120,dmg:20,spd:0.28,cost:0,auto:true},
-  auto_strong: {icon:'🔥',hp:220,maxHp:220,dmg:40,spd:0.26,cost:0,auto:true},
-  auto_boss:   {icon:'💣',hp:500,maxHp:500,dmg:80,spd:0.20,cost:0,auto:true},
-  // Player-sent mobs (spawn from center toward enemy)
-  zombie:  {icon:'🧟',hp:80, maxHp:80, dmg:15,spd:0.32,cost:30},
-  goblin:  {icon:'🏹',hp:45, maxHp:45, dmg:30,spd:0.75,cost:50},
-  ogre:    {icon:'🐗',hp:200,maxHp:200,dmg:50,spd:0.22,cost:120},
-  dragon:  {icon:'🐉',hp:350,maxHp:350,dmg:90,spd:0.40,cost:300},
+  // Auto-wave mobs — идут из центра к башням
+  auto_weak:   {name:'Скелет',    icon:'💀',hp:120, maxHp:120, dmg:12,spd:0.22,cost:0,auto:true},
+  auto_mid:    {name:'Рыцарь',    icon:'⚔️',hp:260, maxHp:260, dmg:25,spd:0.20,cost:0,auto:true},
+  auto_strong: {name:'Берсерк',   icon:'🪓',hp:480, maxHp:480, dmg:45,spd:0.18,cost:0,auto:true},
+  auto_boss:   {name:'Босс',      icon:'👹',hp:1200,maxHp:1200,dmg:100,spd:0.14,cost:0,auto:true},
+  // Мобы игрока — спавнятся из центра к башне врага
+  zombie:  {name:'Зомби',   icon:'🧟',hp:160, maxHp:160, dmg:20,spd:0.20,cost:60},
+  goblin:  {name:'Гоблин',  icon:'🏹',hp:90,  maxHp:90,  dmg:40,spd:0.55,cost:100},
+  ogre:    {name:'Огр',     icon:'🐗',hp:400, maxHp:400, dmg:70,spd:0.16,cost:250},
+  dragon:  {name:'Дракон',  icon:'🐉',hp:700, maxHp:700, dmg:130,spd:0.30,cost:600},
 };
-const UPGC = {cannon:80,wall:100,fire:150,mine:200,ballista:250};
+const UPGC = {cannon:150,wall:200,fire:300,mine:350,ballista:500};
 const UPGI = {cannon:'💣',wall:'🛡️',fire:'🔥',mine:'⛏️',ballista:'🎯'};
 const SKCD = {strike:20,slow:25,heal:30,bomb:35};
 
@@ -603,8 +604,10 @@ function makeG(p1n,p2n){
   return{
     p1:{name:p1n,hp:1000,maxHp:1000,gold:100,upgs:{},skills:{strike:0,slow:0,heal:0,bomb:0},mines:0,mobs:[],shots:[]},
     p2:{name:p2n,hp:1000,maxHp:1000,gold:100,upgs:{},skills:{},mines:0,mobs:[],shots:[]},
-    wave:1,waveTimer:15,maxWave:15,vsBot:false,running:true,mid:0,
+    allMobs:null, // null = use p1.mobs + p2.mobs
+    wave:1,waveTimer:20,maxWave:15,vsBot:false,running:true,mid:0,
     slowP1:false,slowP2:false,slowT1:0,slowT2:0,
+    spawnQueue:[],
   };
 }
 
@@ -635,27 +638,45 @@ async function startOnline(rid,slot,opp){
 function syncState(v,opp){
   const first=!G;
   if(!v)return;
+  // ALL mobs from Firebase — displayed on battlefield by their actual x position and dir
+  // dir='left' = going toward p1 tower (left side)
+  // dir='right' = going toward p2 tower (right side)
   const allMobs=mobsArr(v.mobs||{});
-  const p1mobs=allMobs.filter(m=>m.dir==='left');   // going left = toward p1 tower
-  const p2mobs=allMobs.filter(m=>m.dir==='right');  // going right = toward p2 tower
 
   if(first){
     G={
-      p1:{...v.p1,mobs:mySlot==='p1'?p2mobs:p1mobs,shots:[]}, // mobs INCOMING to me
-      p2:{...v.p2,mobs:mySlot==='p1'?p1mobs:p2mobs,shots:[]},
-      wave:v.wave||1,waveTimer:v.waveTimer||15,maxWave:v.maxWave||15,
+      p1:{...v.p1,shots:[]},
+      p2:{...v.p2,shots:[]},
+      allMobs, // single source of truth for display
+      wave:v.wave||1,waveTimer:v.waveTimer||20,maxWave:v.maxWave||15,
       vsBot:false,running:true,mid:v.mid||0,
       slowP1:v.slowP1||false,slowP2:v.slowP2||false,slowT1:v.slowT1||0,slowT2:v.slowT2||0,
+      spawnQueue:[], // local spawn queue for staggered spawning
     };
     G.p1.name=v.p1.name||ME;G.p2.name=v.p2.name||opp;
+    // local convenience arrays (computed from allMobs)
+    G.p1.mobs=allMobs.filter(m=>m.dir==='left');  // mobs heading to p1
+    G.p2.mobs=allMobs.filter(m=>m.dir==='right'); // mobs heading to p2
     initUI();if(isHost)startTimers();return;
   }
-  // Update
-  Object.assign(G.p1,{...v.p1,mobs:mySlot==='p1'?p2mobs:p1mobs,shots:G.p1.shots||[]});
-  Object.assign(G.p2,{...v.p2,mobs:mySlot==='p1'?p1mobs:p2mobs,shots:G.p2.shots||[]});
+  // Update player stats
+  if(v.p1){Object.assign(G.p1,{...v.p1,shots:G.p1.shots||[]});}
+  if(v.p2){Object.assign(G.p2,{...v.p2,shots:G.p2.shots||[]});}
   G.wave=v.wave||G.wave;G.waveTimer=v.waveTimer??G.waveTimer;
   G.slowP1=v.slowP1||false;G.slowP2=v.slowP2||false;
   G.slowT1=v.slowT1||0;G.slowT2=v.slowT2||0;
+  G.allMobs=allMobs;
+  G.p1.mobs=allMobs.filter(m=>m.dir==='left');
+  G.p2.mobs=allMobs.filter(m=>m.dir==='right');
+
+  // Spawn visual shots for tower attacking closest mob
+  if(canvas){
+    const W=canvas.width,H=canvas.height;
+    const p1in=G.p1.mobs.filter(m=>!(m.spawnDelay>0)).sort((a,b)=>a.x-b.x);
+    const p2in=G.p2.mobs.filter(m=>!(m.spawnDelay>0)).sort((a,b)=>b.x-a.x);
+    if(p1in.length&&Math.random()<0.3)shots.push({fromX:58/W,fromY:H*0.42/H,toX:p1in[0].x,toY:0.64,t:Date.now(),col:'#f0c040'});
+    if(p2in.length&&Math.random()<0.3)shots.push({fromX:(W-58)/W,fromY:H*0.42/H,toX:p2in[0].x,toY:0.64,t:Date.now(),col:'#4090f0'});
+  }
   updateUI();
 }
 
@@ -675,15 +696,14 @@ function localAct(type,val){
   if(type==='mob'){
     const d=MOBS[val];if(!d||p.gold<d.cost){showEv('❌ Мало золота!');return;}
     p.gold-=d.cost;
-    // Spawn from center going RIGHT (toward p2)
-    G.p2.mobs.push({id:`m${G.mid++}`,type:val,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
-      dmg:d.dmg,spd:d.spd,x:0.5,dir:'right',slowed:false,fire:false,fireT:0});
-    showEv(`${d.icon} отправлен на врага!`);
+    G.p2.mobs.push({id:`m${G.mid++}`,type:val,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
+      dmg:d.dmg,spd:d.spd,x:0.5,dir:'right',slowed:false,spawnDelay:0});
+    showEv(`${d.icon} ${d.name} отправлен на врага!`);
   } else if(type==='upg'){
     if(p.upgs[val]){showEv('Уже куплено!');return;}
     const c=UPGC[val];if(p.gold<c){showEv('❌ Мало золота!');return;}
     p.gold-=c;p.upgs[val]=true;
-    if(val==='wall'){p.maxHp+=300;p.hp=Math.min(p.hp+300,p.maxHp);}
+    if(val==='wall'){p.maxHp+=400;p.hp=Math.min(p.hp+400,p.maxHp);}
     if(val==='mine')p.mines++;
     showEv(`${UPGI[val]} куплено!`);
   } else if(type==='skill'){
@@ -713,13 +733,12 @@ async function remoteAct(type,val){
     const d=MOBS[val];if(!d||my.gold<d.cost){showEv('❌ Мало золота!');return;}
     upds[`rooms/${roomId}/${mySlot}/gold`]=my.gold-d.cost;
     const k=`m${Date.now()}`;
-    // dir: if I'm p1, my mobs go right toward p2; if I'm p2, my mobs go left toward p1
     const dir=mySlot==='p1'?'right':'left';
     upds[`rooms/${roomId}/mobs/${k}`]={
-      id:k,type:val,icon:d.icon,hp:d.hp,maxHp:d.maxHp,dmg:d.dmg,spd:d.spd,
-      x:0.5,dir,slowed:false,fire:false,fireT:0
+      id:k,type:val,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,dmg:d.dmg,spd:d.spd,
+      x:0.5,dir,slowed:false,spawnDelay:0
     };
-    showEv(`${d.icon} отправлен на врага!`);
+    showEv(`${d.icon} ${d.name} отправлен на врага!`);
   } else if(type==='upg'){
     if(my.upgs?.[val]){showEv('Уже куплено!');return;}
     const c=UPGC[val];if(my.gold<c){showEv('❌ Мало золота!');return;}
@@ -772,9 +791,9 @@ async function hostWaveTick(){
   const v=snap.val();if(v.phase!=='playing')return;
   const upds={};
 
-  // Gold
-  upds[`rooms/${roomId}/p1/gold`]=(v.p1.gold||0)+20+(v.p1.mines||0)*15;
-  upds[`rooms/${roomId}/p2/gold`]=(v.p2.gold||0)+20+(v.p2.mines||0)*15;
+  // Gold — slower income
+  upds[`rooms/${roomId}/p1/gold`]=(v.p1.gold||0)+12+(v.p1.mines||0)*20;
+  upds[`rooms/${roomId}/p2/gold`]=(v.p2.gold||0)+12+(v.p2.mines||0)*20;
 
   // Skill CDs
   for(const sk of['strike','slow','heal','bomb']){
@@ -787,13 +806,12 @@ async function hostWaveTick(){
   if(v.slowP1){const t=(v.slowT1||0)-1;if(t<=0){upds[`rooms/${roomId}/slowP1`]=false;upds[`rooms/${roomId}/slowT1`]=0;}else upds[`rooms/${roomId}/slowT1`]=t;}
   if(v.slowP2){const t=(v.slowT2||0)-1;if(t<=0){upds[`rooms/${roomId}/slowP2`]=false;upds[`rooms/${roomId}/slowT2`]=0;}else upds[`rooms/${roomId}/slowT2`]=t;}
 
-  // Tower fire damage on mobs
+  // Tower fire/ballista damage on mobs (per second tick)
   let allMobs=mobsArr(v.mobs||{});
-  if(v.p1.upgs?.fire)allMobs.filter(m=>m.dir==='left').forEach(m=>m.hp-=5);
-  if(v.p2.upgs?.fire)allMobs.filter(m=>m.dir==='right').forEach(m=>m.hp-=5);
-  // Ballista hits all mobs going toward that tower
-  if(v.p1.upgs?.ballista)allMobs.filter(m=>m.dir==='left').forEach(m=>m.hp-=10);
-  if(v.p2.upgs?.ballista)allMobs.filter(m=>m.dir==='right').forEach(m=>m.hp-=10);
+  if(v.p1.upgs?.fire)allMobs.filter(m=>m.dir==='left').forEach(m=>m.hp-=8);
+  if(v.p2.upgs?.fire)allMobs.filter(m=>m.dir==='right').forEach(m=>m.hp-=8);
+  if(v.p1.upgs?.ballista)allMobs.filter(m=>m.dir==='left').forEach(m=>m.hp-=12);
+  if(v.p2.upgs?.ballista)allMobs.filter(m=>m.dir==='right').forEach(m=>m.hp-=12);
 
   allMobs=allMobs.filter(m=>m.hp>0);
   const mo={};allMobs.forEach(m=>mo[m.id]=m);
@@ -809,22 +827,23 @@ async function hostWaveTick(){
     } else {
       const nw=wave+1;
       upds[`rooms/${roomId}/wave`]=nw;
-      upds[`rooms/${roomId}/waveTimer`]=15;
-      upds[`rooms/${roomId}/p1/gold`]=(upds[`rooms/${roomId}/p1/gold`]||v.p1.gold||0)+50;
-      upds[`rooms/${roomId}/p2/gold`]=(upds[`rooms/${roomId}/p2/gold`]||v.p2.gold||0)+50;
-      // Spawn auto-wave mobs
+      upds[`rooms/${roomId}/waveTimer`]=20;
+      upds[`rooms/${roomId}/p1/gold`]=(upds[`rooms/${roomId}/p1/gold`]||v.p1.gold||0)+80;
+      upds[`rooms/${roomId}/p2/gold`]=(upds[`rooms/${roomId}/p2/gold`]||v.p2.gold||0)+80;
+      // Spawn auto-wave mobs — staggered with spawnDelay field
       const wc=WAVE_CONFIG[Math.min(nw-1,WAVE_CONFIG.length-1)];
-      const newMobs={...mo};let mid=v.mid||0;
+      const newMobs={...mo};let mid=v.mid||0;let delay=0;
       wc.forEach(({type,count})=>{
         for(let i=0;i<count;i++){
           const d=MOBS[type];
-          const offset=(i/count-0.5)*0.04;
-          // Half go left (toward p1), half go right (toward p2)
+          const jitter=(Math.random()-0.5)*0.02;
           ['left','right'].forEach(dir=>{
             const k=`ma${mid++}`;
-            newMobs[k]={id:k,type,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
-              dmg:d.dmg,spd:d.spd,x:0.5+offset,dir,slowed:false,fire:false,fireT:0};
+            newMobs[k]={id:k,type,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
+              dmg:d.dmg,spd:d.spd,x:0.5+jitter,dir,slowed:false,fire:false,
+              spawnDelay:delay}; // stagger spawn
           });
+          delay+=0.8; // 0.8s between each mob
         }
       });
       upds[`rooms/${roomId}/mobs`]=newMobs;
@@ -843,23 +862,29 @@ async function hostMobTick(){
 
   let allMobs=mobsArr(v.mobs||{});
   let p1hp=v.p1.hp||0,p2hp=v.p2.hp||0;
-  const step=0.007;
-  // Tower base attack speed (1 shot per tick per mob closest)
-  const p1atkBonus=v.p1.upgs?.cannon?15:0;
-  const p2atkBonus=v.p2.upgs?.cannon?15:0;
-  const towerDmg1=12+p1atkBonus; // p1 tower damage per tick to closest mob
-  const towerDmg2=12+p2atkBonus;
+  const step=0.006; // slightly slower movement
+  // Tower base shot damage — weaker so mobs live longer
+  const p1atkBonus=v.p1.upgs?.cannon?20:0;
+  const p2atkBonus=v.p2.upgs?.cannon?20:0;
+  const towerDmg1=8+p1atkBonus;
+  const towerDmg2=8+p2atkBonus;
 
-  // Find closest mob to each tower
-  const p1incoming=allMobs.filter(m=>m.dir==='left').sort((a,b)=>a.x-b.x);
-  const p2incoming=allMobs.filter(m=>m.dir==='right').sort((a,b)=>b.x-a.x);
+  // Handle spawnDelay — mobs with delay > 0 don't move yet
+  allMobs.forEach(m=>{
+    if((m.spawnDelay||0)>0){m.spawnDelay-=0.1;} // decremented each tick (~10 ticks/sec)
+  });
+
+  // Find closest ACTIVE mob to each tower
+  const p1active=allMobs.filter(m=>m.dir==='left'&&(m.spawnDelay||0)<=0).sort((a,b)=>a.x-b.x);
+  const p2active=allMobs.filter(m=>m.dir==='right'&&(m.spawnDelay||0)<=0).sort((a,b)=>b.x-a.x);
 
   // Tower attacks closest mob
-  if(p1incoming.length)p1incoming[0].hp-=towerDmg1;
-  if(p2incoming.length)p2incoming[0].hp-=towerDmg2;
+  if(p1active.length)p1active[0].hp-=towerDmg1;
+  if(p2active.length)p2active[0].hp-=towerDmg2;
 
-  // Move mobs & check hits
+  // Move ACTIVE mobs
   allMobs.forEach(m=>{
+    if((m.spawnDelay||0)>0)return;
     const sp=(m.slowed?0.35:1)*m.spd;
     if(m.dir==='left'){m.x-=sp*step;if(m.x<=0.06){p1hp-=m.dmg;m.hp=0;}}
     else{m.x+=sp*step;if(m.x>=0.94){p2hp-=m.dmg;m.hp=0;}}
@@ -885,23 +910,31 @@ async function hostMobTick(){
 function localWaveTick(){
   if(!G||!G.running)return;
   G.waveTimer--;
-  G.p1.gold+=20+G.p1.mines*15; G.p2.gold+=20+G.p2.mines*15;
+  G.p1.gold+=12+G.p1.mines*20; G.p2.gold+=12+G.p2.mines*20;
   for(const sk of['strike','slow','heal','bomb'])if((G.p1.skills[sk]||0)>0)G.p1.skills[sk]--;
   // Slow timers
   if(G.slowP1){G.slowT1--;if(G.slowT1<=0){G.slowP1=false;G.p1.mobs.forEach(m=>m.slowed=false);}}
   if(G.slowP2){G.slowT2--;if(G.slowT2<=0){G.slowP2=false;G.p2.mobs.forEach(m=>m.slowed=false);}}
-  // Tower defenses
-  if(G.p1.upgs.fire)G.p1.mobs.forEach(m=>m.hp-=5);
-  if(G.p2.upgs.fire)G.p2.mobs.forEach(m=>m.hp-=5);
-  if(G.p1.upgs.ballista)G.p1.mobs.forEach(m=>m.hp-=10);
-  if(G.p2.upgs.ballista)G.p2.mobs.forEach(m=>m.hp-=10);
+  // Tower AoE damage
+  if(G.p1.upgs.fire)G.p1.mobs.forEach(m=>m.hp-=8);
+  if(G.p2.upgs.fire)G.p2.mobs.forEach(m=>m.hp-=8);
+  if(G.p1.upgs.ballista)G.p1.mobs.forEach(m=>m.hp-=12);
+  if(G.p2.upgs.ballista)G.p2.mobs.forEach(m=>m.hp-=12);
   G.p1.mobs=G.p1.mobs.filter(m=>m.hp>0);
   G.p2.mobs=G.p2.mobs.filter(m=>m.hp>0);
+  // Drain spawnDelay queue
+  G.spawnQueue=G.spawnQueue||[];
+  while(G.spawnQueue.length){
+    const item=G.spawnQueue[0];
+    item.delay-=1;
+    if(item.delay<=0){G.spawnQueue.shift();item.fn();}
+    else break;
+  }
   botAI();
   if(G.waveTimer<=0){
     if(G.wave>=G.maxWave){endGame(G.p1.hp>G.p2.hp);return;}
-    G.wave++;G.waveTimer=15;
-    G.p1.gold+=50;G.p2.gold+=50;
+    G.wave++;G.waveTimer=20;
+    G.p1.gold+=80;G.p2.gold+=80;
     $('wN').textContent=G.wave;showEv(`🔔 ВОЛНА ${G.wave}!`);
     spawnAutoWave(G.wave);
   }
@@ -910,38 +943,60 @@ function localWaveTick(){
 
 function spawnAutoWave(wave){
   const wc=WAVE_CONFIG[Math.min(wave-1,WAVE_CONFIG.length-1)];
+  G.spawnQueue=G.spawnQueue||[];
+  let delay=0;
   wc.forEach(({type,count})=>{
     for(let i=0;i<count;i++){
       const d=MOBS[type];
-      const off=(i/count-0.5)*0.04;
-      // Mobs toward p1 (left = incoming to p1)
-      G.p1.mobs.push({id:`ma${G.mid++}`,type,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
-        dmg:d.dmg,spd:d.spd,x:0.5+off,dir:'left',slowed:false,fire:false});
-      // Mobs toward p2 (right = incoming to p2)
-      G.p2.mobs.push({id:`ma${G.mid++}`,type,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
-        dmg:d.dmg,spd:d.spd,x:0.5+off,dir:'right',slowed:false,fire:false});
+      const jitter=(Math.random()-0.5)*0.02;
+      const curDelay=delay;
+      G.spawnQueue.push({delay:curDelay,fn:()=>{
+        G.p1.mobs.push({id:`ma${G.mid++}`,type,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
+          dmg:d.dmg,spd:d.spd,x:0.5+jitter,dir:'left',slowed:false});
+        G.p2.mobs.push({id:`ma${G.mid++}`,type,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
+          dmg:d.dmg,spd:d.spd,x:0.5+jitter,dir:'right',slowed:false});
+      }});
+      delay+=1; // 1 second between each mob group
     }
   });
 }
 
 function localMobTick(){
   if(!G||!G.running)return;
-  const step=0.007;
-  const p1atkB=G.p1.upgs.cannon?15:0;
-  const p2atkB=G.p2.upgs.cannon?15:0;
-  const td1=12+p1atkB,td2=12+p2atkB;
+  const step=0.006;
+  const p1atkB=G.p1.upgs.cannon?20:0;
+  const p2atkB=G.p2.upgs.cannon?20:0;
+  const td1=8+p1atkB,td2=8+p2atkB;
+  const W=canvas?canvas.width:600,H=canvas?canvas.height:400;
 
-  // Tower attacks closest incoming mob
-  const p1in=[...G.p1.mobs].sort((a,b)=>a.x-b.x);
-  const p2in=[...G.p2.mobs].sort((a,b)=>b.x-a.x);
-  if(p1in.length){const t=G.p1.mobs.find(m=>m.id===p1in[0].id);if(t)t.hp-=td1;}
-  if(p2in.length){const t=G.p2.mobs.find(m=>m.id===p2in[0].id);if(t)t.hp-=td2;}
+  // Tower attacks closest ACTIVE mob + spawn visual bullet
+  const p1in=G.p1.mobs.filter(m=>!(m.spawnDelay>0)).sort((a,b)=>a.x-b.x);
+  const p2in=G.p2.mobs.filter(m=>!(m.spawnDelay>0)).sort((a,b)=>b.x-a.x);
+  if(p1in.length){
+    p1in[0].hp-=td1;
+    shots.push({fromX:58/W,fromY:H*0.42/H,toX:p1in[0].x,toY:0.64,t:Date.now(),col:'#f0c040'});
+  }
+  if(p2in.length){
+    p2in[0].hp-=td2;
+    shots.push({fromX:(W-58)/W,fromY:H*0.42/H,toX:p2in[0].x,toY:0.64,t:Date.now(),col:'#4090f0'});
+  }
 
-  // Move p1's incoming mobs (going left)
-  G.p1.mobs.forEach(m=>{m.x-=(m.slowed?0.35:1)*m.spd*step;if(m.x<=0.06){G.p1.hp-=m.dmg;m.hp=0;}});
+  // Drain spawnDelay (local — in seconds * 10 ticks)
+  G.p1.mobs.forEach(m=>{if((m.spawnDelay||0)>0)m.spawnDelay-=0.1;});
+  G.p2.mobs.forEach(m=>{if((m.spawnDelay||0)>0)m.spawnDelay-=0.1;});
+
+  // Move active mobs
+  G.p1.mobs.forEach(m=>{
+    if((m.spawnDelay||0)>0)return;
+    m.x-=(m.slowed?0.35:1)*m.spd*step;
+    if(m.x<=0.06){G.p1.hp-=m.dmg;m.hp=0;}
+  });
   G.p1.mobs=G.p1.mobs.filter(m=>m.hp>0);
-  // Move p2's incoming mobs (going right)
-  G.p2.mobs.forEach(m=>{m.x+=(m.slowed?0.35:1)*m.spd*step;if(m.x>=0.94){G.p2.hp-=m.dmg;m.hp=0;}});
+  G.p2.mobs.forEach(m=>{
+    if((m.spawnDelay||0)>0)return;
+    m.x+=(m.slowed?0.35:1)*m.spd*step;
+    if(m.x>=0.94){G.p2.hp-=m.dmg;m.hp=0;}
+  });
   G.p2.mobs=G.p2.mobs.filter(m=>m.hp>0);
 
   if(G.p1.hp<=0){endGame(false);return;}if(G.p2.hp<=0){endGame(true);return;}
@@ -976,13 +1031,13 @@ function botAI(){
 function bMob(t){
   const d=MOBS[t];if(!d||G.p2.gold<d.cost)return;
   G.p2.gold-=d.cost;
-  G.p1.mobs.push({id:`m${G.mid++}`,type:t,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
-    dmg:d.dmg,spd:d.spd,x:0.5,dir:'left',slowed:false,fire:false});
+  G.p1.mobs.push({id:`m${G.mid++}`,type:t,name:d.name,icon:d.icon,hp:d.hp,maxHp:d.maxHp,
+    dmg:d.dmg,spd:d.spd,x:0.5,dir:'left',slowed:false,spawnDelay:0});
 }
 function bUpg(t){
   const c=UPGC[t];if(G.p2.gold<c||G.p2.upgs[t])return;
   G.p2.gold-=c;G.p2.upgs[t]=true;
-  if(t==='wall'){G.p2.maxHp+=300;G.p2.hp=Math.min(G.p2.hp+300,G.p2.maxHp);}
+  if(t==='wall'){G.p2.maxHp+=400;G.p2.hp=Math.min(G.p2.hp+400,G.p2.maxHp);}
   if(t==='mine')G.p2.mines++;
 }
 
@@ -1002,6 +1057,31 @@ function initUI(){
   canvas.width=canvas.parentElement.clientWidth;
   canvas.height=canvas.parentElement.clientHeight;
   ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
+  // Tooltip on hover
+  canvas.addEventListener('mousemove',e=>{
+    const rect=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)/canvas.width;
+    const myY=(e.clientY-rect.top)/canvas.height;
+    const tip=$('mobTip');
+    const allM=G.allMobs||[...(G.p1.mobs||[]),...(G.p2.mobs||[])];
+    let found=null;
+    for(const m of allM){
+      if(!m)continue;
+      const sz=(MKEYS.indexOf(m.type)>=0?MSIZES[MKEYS.indexOf(m.type)]:18)/canvas.width*2;
+      if(Math.abs(m.x-mx)<sz&&Math.abs(0.64-myY)<0.08){found=m;break;}
+    }
+    if(found){
+      const hp=Math.max(0,Math.round(found.hp));
+      const pct=Math.round(hp/found.maxHp*100);
+      tip.innerHTML=`${found.icon} ${found.name||found.type}<br>HP: ${hp}/${found.maxHp} (${pct}%)<br>Урон: ${found.dmg}`;
+      tip.style.display='block';
+      tip.style.left=Math.min(e.clientX-rect.left+12,canvas.width-160)+'px';
+      tip.style.top=Math.max(e.clientY-rect.top-60,8)+'px';
+    } else {
+      tip.style.display='none';
+    }
+  });
+  canvas.addEventListener('mouseleave',()=>$('mobTip').style.display='none');
   if(rafId)cancelAnimationFrame(rafId);
   drawLoop();updateUI();
   // Spawn first wave mobs for bot
@@ -1082,11 +1162,11 @@ function draw(){
   drawTower(ctx,W,H,G.p1,false); // left tower
   drawTower(ctx,W,H,G.p2,true);  // right tower
 
-  // ── MOBS ──
-  (G.p1.mobs||[]).forEach(m=>drawMob(ctx,m,W,H));
-  (G.p2.mobs||[]).forEach(m=>drawMob(ctx,m,W,H));
+  // ── MOBS ── use allMobs for online (single array), p1/p2 mobs for bot
+  const displayMobs = G.allMobs || [...(G.p1.mobs||[]),...(G.p2.mobs||[])];
+  displayMobs.forEach(m=>drawMob(ctx,m,W,H));
 
-  // Tower shots — visual only
+  // Tower shots — visual bullets
   drawShots(W,H);
 }
 
@@ -1170,6 +1250,7 @@ const MKEYS=['zombie','goblin','ogre','dragon','auto_weak','auto_mid','auto_stro
 
 function drawMob(ctx,mob,W,H){
   if(!mob)return;
+  const waiting=(mob.spawnDelay||0)>0;
   const px=mob.x*W,py=H*0.64;
   const ki=MKEYS.indexOf(mob.type);
   const bc=ki>=0?MBODIES[ki]:'#888';
@@ -1177,28 +1258,26 @@ function drawMob(ctx,mob,W,H){
   const sz=ki>=0?MSIZES[ki]:18;
   const goLeft=mob.dir==='left';
 
+  ctx.save();
+  if(waiting)ctx.globalAlpha=0.3; // faded while waiting to spawn
+
   // Shadow
   ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.ellipse(px,py+sz*0.5+3,sz*0.55,4,0,0,Math.PI*2);ctx.fill();
 
-  ctx.save();
   if(goLeft){ctx.translate(px,py);ctx.scale(-1,1);ctx.translate(-px,-py);}
 
   // Body
   ctx.fillStyle=bc;ctx.fillRect(px-sz/2,py-sz,sz,sz*0.92);
   // Head
   ctx.fillStyle=bc;ctx.fillRect(px-sz*0.35,py-sz*1.42,sz*0.7,sz*0.52);
-  // Eyes
+  // Eye
   ctx.fillStyle=ec;ctx.fillRect(px-sz*0.2,py-sz*1.3,sz*0.14,sz*0.14);
   // Weapon
   ctx.fillStyle='#a0a0a0';ctx.fillRect(px+sz*0.35,py-sz*0.8,3,sz*0.7);
 
-  // Fire effect
-  if(mob.fire){
-    ctx.fillStyle='#f06000';ctx.globalAlpha=0.5;
-    ctx.fillRect(px-sz/2,py-sz,sz,sz);ctx.globalAlpha=1;
-  }
-
   ctx.restore();
+
+  if(waiting)return; // no HP bar for waiting mobs
 
   // HP bar
   const bw=sz*1.15;const ratio=Math.max(0,mob.hp/mob.maxHp);
@@ -1206,21 +1285,26 @@ function drawMob(ctx,mob,W,H){
   ctx.fillStyle=ratio>0.6?'#20c040':ratio>0.3?'#d08010':'#d02010';
   ctx.fillRect(px-bw/2,py-sz*1.6,bw*ratio,4);
 
-  // Slow visual
+  // Slow ring
   if(mob.slowed){ctx.strokeStyle='#4aafff';ctx.lineWidth=1;ctx.strokeRect(px-sz/2-1,py-sz-1,sz+2,sz+2);}
 }
 
-// Visual shots (local only, cosmetic)
+// Visual shots
 let shots=[];
 function drawShots(W,H){
   const now=Date.now();
-  shots=shots.filter(s=>now-s.t<300);
+  shots=shots.filter(s=>now-s.t<400);
   shots.forEach(s=>{
-    const prog=(now-s.t)/300;
-    const sx=s.fromX*W+(s.toX*W-s.fromX*W)*prog;
-    const sy=s.fromY*H+(s.toY*H-s.fromY*H)*prog;
-    ctx.fillStyle=s.col;ctx.globalAlpha=1-prog;
-    ctx.fillRect(sx-3,sy-3,6,6);
+    const prog=(now-s.t)/400;
+    const px=(s.fromX+(s.toX-s.fromX)*prog)*W;
+    const py=(s.fromY+(s.toY-s.fromY)*prog)*H;
+    // Cannonball
+    ctx.fillStyle=s.col;
+    ctx.globalAlpha=1-prog*0.5;
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();
+    // Trail
+    ctx.fillStyle=s.col;ctx.globalAlpha=(1-prog)*0.3;
+    ctx.beginPath();ctx.arc(px-(s.toX-s.fromX)*W*0.04,py-(s.toY-s.fromY)*H*0.04,3,0,Math.PI*2);ctx.fill();
     ctx.globalAlpha=1;
   });
 }
